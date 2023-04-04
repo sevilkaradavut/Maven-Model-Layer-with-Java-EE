@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:tx="http://www.springframework.org/schema/tx" xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+<!--	<bean id="basicDataSource"
+		class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName"
+			value="com.mysql.cj.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/personnel_db" />
+		<property name="username" value="root" />
+		<property name="password" value="12345" />
+
+	</bean>
+
+	<bean id="driverManagerDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="com.mysql.cj.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/personnel_db" />
+		<property name="username" value="root" />
+		<property name="password" value="12345" />
+
+        </bean> 
+-->
+
+	<bean id="comboPooledDataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClassName"
+			value="com.mysql.cj.jdbc.Driver" />
+		<property name="jdbcUrl"
+			value="jdbc:mysql://localhost:3306/personnel_db" />
+		<property name="username" value="root" />
+		<property name="password" value="12345" />
+
+		<property name="minPoolSize" value="10"></property>
+		<property name="maxPoolSize" value="100"></property>
+		<property name="acquireIncrement" value="10"></property>
+		<property name="maxStatements" value="200"></property>
+		<property name="idleConnectionTestPeriod" value="300"></property>
+		<property name="maxIdleTime" value="2500"></property>
+
+
+	</bean>
+	
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="comboPooledDataSource"></property>
+		<property name="jpaVendorAdapter">
+		<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"></bean>
+		</property>
+		<property name="packagesToScan" value="maven.personnelSystem.model"></property>
+		<property name="jpaProperties">
+		<props>
+		<prop key="hibernate.show_sql">true</prop>
+		<prop key="hibernate.format_sql">true</prop>
+		<prop key="hibernate.hbm2ddl.auto">create</prop>
+		<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+		</props>
+		</property>
+	</bean>
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+	<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
